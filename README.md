@@ -11,7 +11,7 @@
 
 Let the people using your app connect their EV chargers to Plugchoice, without leaving your app. The SDK opens Plugchoice's guided setup in your iOS, Android or React Native app and takes care of what only a phone can do: Wi-Fi hotspots, the local network and Bluetooth.
 
-**[Documentation](https://developer.plugchoice.com/sdk)** · [API reference](https://developer.plugchoice.com/api)
+**[Documentation](https://developer.plugchoice.com/sdk)** · [API reference](https://developer.plugchoice.com/sdk/api)
 
 <img src="assets/readme-flow.png" alt="Acme Energy's app opens Plugchoice's setup: the user agrees to connect their charger, then the charger is set up step by step." width="100%">
 
