@@ -23,7 +23,9 @@ let package = Package(
     targets: [
         .target(
             name: "PlugchoiceSDK",
-            path: "ios/Sources/PlugchoiceSDK"
+            path: "ios/Sources/PlugchoiceSDK",
+            // Apple's privacy manifest for the SDK; Xcode merges it into the app's privacy report.
+            resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
         // iOS only (UIKit, WebKit): run with xcodebuild on a simulator, see ios/README.md.
         .testTarget(
