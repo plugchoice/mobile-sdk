@@ -4,6 +4,8 @@ on:
   pull_request:
   push:
     branches: [main]
+  # The release workflow starts it on release-please's pull request (see release.yml).
+  workflow_dispatch:
 
 permissions:
   contents: read
