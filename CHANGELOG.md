@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/plugchoice/mobile-sdk/compare/0.3.0...0.4.0) (2026-10-07)
+
+
+### Features
+
+* **ios:** add a privacy manifest ([#2](https://github.com/plugchoice/mobile-sdk/issues/2)) ([f6ddd05](https://github.com/plugchoice/mobile-sdk/commit/f6ddd0501c310e2d657f5a6bd5a31c978c241627))
+
 ## 0.3.0 (2026-10-07)
 
 The first public version of the Plugchoice Mobile SDK, in beta.

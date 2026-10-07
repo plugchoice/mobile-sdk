@@ -1,6 +1,6 @@
 {
   "name": "@plugchoice/react-native",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "The Plugchoice SDK for React Native and Expo: connect EV chargers to Plugchoice from your app.",
   "license": "MIT",
   "homepage": "https://github.com/plugchoice/mobile-sdk/tree/main/react-native#readme",
