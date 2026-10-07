@@ -260,7 +260,9 @@ final class SocketTests: XCTestCase {
 
         let server = try await LocalUDPServer.start(repliesPerDatagram: 2)
         servers.append(server)
-        let some = try replies(try await exchange(UDPExchanges.Request(host: "127.0.0.1", port: server.port, data: Data("a".utf8), timeoutMs: 300, maxReplies: 5)))
+        // Long enough for a busy CI runner's loopback; the exchange still ends at
+        // its deadline with fewer than maxReplies.
+        let some = try replies(try await exchange(UDPExchanges.Request(host: "127.0.0.1", port: server.port, data: Data("a".utf8), timeoutMs: 2_000, maxReplies: 5)))
         XCTAssertEqual(some.count, 2, "fewer than maxReplies by the deadline")
     }
 

@@ -28,14 +28,14 @@ final class ClientSecretsTests: XCTestCase {
         }
 
         func fetch(_ action: LinkAction) async throws -> String {
-            let (answer, delay) = lock.withLock { () -> (Result<String, Error>, TimeInterval) in
+            let (answer, wait) = lock.withLock { () -> (Result<String, Error>, TimeInterval) in
                 let index = _calls
                 _calls += 1
                 _actions.append(action)
-                return (index < answers.count ? answers[index] : answers.last!, delay)
+                return (index < answers.count ? answers[index] : answers.last!, self.delay)
             }
-            if delay > 0 {
-                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            if wait > 0 {
+                try? await Task.sleep(nanoseconds: UInt64(wait * 1_000_000_000))
             }
             return try answer.get()
         }
