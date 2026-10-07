@@ -43,9 +43,10 @@ export type Device = {
 /** Why a Link run ended in `error`. */
 export type LinkError = {
   /**
-   * A camelCase code from the page (`clientSecretUnavailable` when your `fetchClientSecret` gave
-   * no secret, among others), or one the SDK sets itself: `pageLoadFailed` (the page didn't load
-   * and the user left the "Try again" screen) or `internal` (Android: no usable WebView).
+   * One of the SDK's own codes: `clientSecretUnavailable` (your `fetchClientSecret` gave no
+   * secret), `pageLoadFailed` (the page didn't load and the user left the "Try again" screen) or
+   * `internal` (Android: no usable WebView). Otherwise a problem code from the page, such as
+   * `not-found`.
    */
   code: string;
   /** Free text for logs. */
