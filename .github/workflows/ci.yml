@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  commits:
+    name: Conventional commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check commit messages and the pull request title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: .github/scripts/check-conventional-commits.sh
+
+  react-native:
+    name: React Native
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: react-native
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --global pnpm@11
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Pack
+        run: pnpm pack --pack-destination "$RUNNER_TEMP"
+
+  android:
+    name: Android
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - run: ./gradlew :plugchoice:testDebugUnitTest :plugchoice:lintDebug :example:assembleDebug
+
+  ios:
+    name: iOS
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test on an iPhone simulator
+        run: |
+          device=$(xcrun simctl list devices available --json | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for r,ds in d.items() if "iOS" in r for x in ds if x["name"].startswith("iPhone")))')
+          xcodebuild -scheme PlugchoiceSDK -destination "id=$device" test
+      - name: Build the example app
+        run: xcodebuild -project ios/Example/Example.xcodeproj -scheme Example -destination 'generic/platform=iOS Simulator' build

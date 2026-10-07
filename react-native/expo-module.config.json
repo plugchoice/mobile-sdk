@@ -1,0 +1,12 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "podspecPath": ["ios/PlugchoiceSDK.podspec", "ios/PlugchoiceReactNative.podspec"],
+    "swiftModuleName": "PlugchoiceReactNative",
+    "modules": ["PlugchoiceModule"]
+  },
+  "android": {
+    "modules": ["com.plugchoice.reactnative.PlugchoiceModule"],
+    "projects": [{ "name": "plugchoice-sdk", "path": "android/plugchoice" }]
+  }
+}

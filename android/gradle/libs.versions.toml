@@ -1,0 +1,21 @@
+# Gradle 9.3.1 (wrapper) + AGP 8.13.2 + Kotlin 2.3.21, built with JDK 17.
+# Gradle 9.3 is tested with AGP 8.13-9.0; Kotlin 2.3.20-2.3.21 supports Gradle <= 9.3 and AGP 8.2.2-9.0.
+#
+# The :plugchoice library doesn't use this catalog (it is also built inside React Native host apps);
+# its dependencies are in plugchoice/build.gradle.kts.
+[versions]
+agp = "8.13.2"
+kotlin = "2.3.21"
+maven-publish = "0.37.0"
+activity = "1.12.4"
+core = "1.17.0"
+
+[libraries]
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }

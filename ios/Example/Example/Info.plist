@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_alfen._tcp</string>
+		<string>_http._tcp</string>
+		<string>_https._tcp</string>
+	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app uses Bluetooth to set up your charger.</string>
+	<key>NSAccessorySetupKitSupports</key>
+	<array>
+		<string>WiFi</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app scans the QR code on your charger’s card during setup.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app connects to your charger over its local Wi-Fi network during setup.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses your location to confirm it joined your charger’s Wi-Fi network during setup.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+	</dict>
+</dict>
+</plist>

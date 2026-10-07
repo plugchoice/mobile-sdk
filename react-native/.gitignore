@@ -1,0 +1,3 @@
+# Copies of the native SDKs, made when the package is packed (scripts/copy-native-sdk.js)
+/ios/PlugchoiceSDK/
+/android/plugchoice/

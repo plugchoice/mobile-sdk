@@ -1,0 +1,53 @@
+{
+  "name": "@plugchoice/react-native",
+  "version": "0.3.0",
+  "description": "The Plugchoice SDK for React Native and Expo: connect EV chargers to Plugchoice from your app.",
+  "license": "MIT",
+  "homepage": "https://github.com/plugchoice/mobile-sdk/tree/main/react-native#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plugchoice/mobile-sdk.git",
+    "directory": "react-native"
+  },
+  "bugs": {
+    "url": "https://github.com/plugchoice/mobile-sdk/issues"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "plugchoice",
+    "ev-charger"
+  ],
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src",
+    "plugin",
+    "app.plugin.js",
+    "expo-module.config.json",
+    "ios/*.podspec",
+    "ios/PlugchoiceModule.swift",
+    "ios/PlugchoiceSDK",
+    "android/build.gradle.kts",
+    "android/src/main",
+    "android/plugchoice/build.gradle.kts",
+    "android/plugchoice/src/main"
+  ],
+  "scripts": {
+    "copy-native-sdk": "node scripts/copy-native-sdk.js",
+    "prepack": "node scripts/copy-native-sdk.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "expo": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "expo": "~57.0.27",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.3"
+  }
+}

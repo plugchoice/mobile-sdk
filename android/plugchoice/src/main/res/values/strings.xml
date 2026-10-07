@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plugchoice_link_close">Close</string>
+    <string name="plugchoice_link_load_error_title">The page did not load</string>
+    <string name="plugchoice_link_load_error_detail" translatable="false">%1$s\n%2$s</string>
+    <string name="plugchoice_link_try_again">Try again</string>
+</resources>

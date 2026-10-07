@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Load the Link UI and talk HTTP, WebSocket, TCP and UDP to devices. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Join the charger hotspot with WifiNetworkSpecifier and bind sockets to it. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!-- lan.discover: Android only delivers mDNS (multicast) while a MulticastLock is held. -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <!-- Wi-Fi network requests need location up to Android 12L (API 32)... -->
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:maxSdkVersion="32" />
+    <!-- ...and "nearby Wi-Fi devices" from Android 13 (API 33), without location. -->
+    <uses-permission
+        android:name="android.permission.NEARBY_WIFI_DEVICES"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="33" />
+    <!--
+      ble.*: "nearby devices" from Android 12 (API 31), never used to derive location;
+      before, the install-time Bluetooth permissions plus precise location (above) to scan. A host
+      app that removes these (tools:node="remove") turns Bluetooth off: hello doesn't list "ble".
+    -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="31" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+    <!-- Bluetooth LE is optional: devices without it still install the app (no "ble" in hello). -->
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false" />
+
+    <application>
+        <!--
+          configChanges: the Link UI must never reload mid-flow (it would lose its
+          state and the charger session), so the activity handles rotation, dark
+          mode and keyboard changes itself instead of being recreated.
+        -->
+        <activity
+            android:name="com.plugchoice.internal.LinkActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density|fontScale|layoutDirection|locale|touchscreen|colorMode"
+            android:exported="false"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+    </application>
+</manifest>

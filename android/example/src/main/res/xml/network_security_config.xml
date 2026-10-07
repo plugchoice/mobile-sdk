@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  EXAMPLE APP ONLY. Allows cleartext HTTP to any host: a local Link UI (debug host override) is
+  usually served over plain http from your computer, and a charger's local API on its own hotspot
+  is often plain http too. A real app should permit only the charger addresses it needs.
+-->
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <base-config
+        cleartextTrafficPermitted="true"
+        tools:ignore="InsecureBaseConfiguration">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

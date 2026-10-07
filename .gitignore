@@ -1,0 +1,25 @@
+.DS_Store
+*.local
+
+# Node (the React Native package)
+node_modules/
+*.tgz
+npm-debug.log*
+coverage/
+# Swift Package Manager and Xcode
+.build/
+.swiftpm/
+xcuserdata/
+DerivedData/
+*.xcuserstate
+
+# Gradle and Android Studio
+.gradle/
+.kotlin/
+build/
+local.properties
+.idea/
+*.iml
+captures/
+.cxx/
+.externalNativeBuild/

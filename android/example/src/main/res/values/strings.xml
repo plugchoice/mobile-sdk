@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Plugchoice Example</string>
+    <string name="title">Plugchoice SDK example</string>
+    <string name="client_secret_label">Client secret (from POST /sdk/v1/client-sessions)</string>
+    <string name="client_secret_hint">cs_…</string>
+    <string name="host_label">Link UI host (debug override; empty: connect.plugchoice.com)</string>
+    <string name="host_hint">192.168.1.20:5173</string>
+    <string name="action_label">Action</string>
+    <string name="custom_action_hint">Action name</string>
+    <string name="custom_action_missing">Enter an action name</string>
+    <string name="charger_id_label">Charger id (network, setup, reconnect)</string>
+    <string name="charger_id_hint">42</string>
+    <string name="site_id_label">Site id (add, optional)</string>
+    <string name="site_id_hint">Optional</string>
+    <string name="open">Open</string>
+    <string name="transports">Transports: %1$s</string>
+    <string name="secret_requested">Client secret asked for %1$s at %2$s</string>
+    <string name="last_result">Last result</string>
+    <string name="no_result">None yet</string>
+</resources>
