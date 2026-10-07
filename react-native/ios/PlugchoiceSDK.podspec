@@ -23,8 +23,10 @@ Pod::Spec.new do |s|
   s.author          = 'Plugchoice'
   s.platforms       = { :ios => '16.0' }
   s.swift_version   = '5.9'
-  s.source          = { :git => 'https://github.com/plugchoice/mobile-sdk.git', :tag => "v#{s.version}" }
+  s.source          = { :git => 'https://github.com/plugchoice/mobile-sdk.git', :tag => s.version.to_s }
   s.source_files    = 'PlugchoiceSDK/**/*.swift'
+  # Apple's privacy manifest for the SDK, in its own bundle as CocoaPods recommends.
+  s.resource_bundles = { 'PlugchoiceSDK_Privacy' => ['PlugchoiceSDK/PrivacyInfo.xcprivacy'] }
   s.frameworks      = 'AVFoundation', 'CoreBluetooth', 'CoreLocation', 'Network', 'NetworkExtension', 'Security', 'WebKit'
   # iOS 18+ only; weak, so apps still launch on iOS 16 and 17.
   s.weak_frameworks = 'AccessorySetupKit'
