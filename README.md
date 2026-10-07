@@ -37,6 +37,10 @@ See the [installation guide](https://developer.plugchoice.com/sdk/install) for e
 
 Follow the [integration guide](https://developer.plugchoice.com/sdk/get-started). Example apps are in [`ios/Example`](ios/Example) and [`android/example`](android/example).
 
+## Security
+
+Email security issues to [security@plugchoice.com](mailto:security@plugchoice.com). See [SECURITY.md](SECURITY.md).
+
 ## License
 
 See [LICENSE](LICENSE).
