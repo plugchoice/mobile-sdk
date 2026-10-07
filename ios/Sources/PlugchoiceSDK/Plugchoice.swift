@@ -169,10 +169,11 @@ public struct Device: Sendable, Equatable, Hashable {
     }
 }
 
-/// Why a Link run ended in `error`: a camelCase `code` and free text for
-/// logs. The code comes from the page (`clientSecretUnavailable` when your
-/// callback gave no secret, among others), or the SDK sets it itself:
-/// `pageLoadFailed` (the user left the "Try again" screen) or `internal`.
+/// Why a Link run ended in `error`: a `code` and free text for logs. The
+/// code is one of the SDK's own: `clientSecretUnavailable` (your callback
+/// gave no secret), `pageLoadFailed` (the user left the "Try again" screen)
+/// or `internal`. Otherwise it's a problem code from the page, such as
+/// `not-found`.
 public struct LinkError: Error, Sendable, Equatable {
     public let code: String
     public let message: String?
