@@ -94,7 +94,7 @@ public final class Plugchoice: Sendable {
         ///
         /// - Parameters:
         ///   - action: What to do, such as `.addCharger()` or
-        ///     `.network(chargerId:)`.
+        ///     `.reconnect(chargerId:)`.
         ///   - presenter: The view controller to present from.
         ///   - completion: Called with the result.
         @MainActor
@@ -120,7 +120,7 @@ public final class Plugchoice: Sendable {
 /// open string; the hosted page decides what it means. `fetchClientSecret`
 /// gets it too, so your server can scope the client secret.
 public struct LinkAction: Sendable, Equatable, Hashable {
-    /// `add`, `network`, `setup`, `reconnect`, or a later one.
+    /// `add`, `setup`, `reconnect`, or a later one.
     public let action: String
     public let chargerId: String?
     public let siteId: String?
@@ -136,17 +136,14 @@ public struct LinkAction: Sendable, Equatable, Hashable {
         LinkAction(action: "add", siteId: siteId)
     }
 
-    /// Change a charger's network connection.
-    public static func network(chargerId: String) -> LinkAction {
-        LinkAction(action: "network", chargerId: chargerId)
-    }
-
     /// Set up a charger's electrical settings.
     public static func setup(chargerId: String) -> LinkAction {
         LinkAction(action: "setup", chargerId: chargerId)
     }
 
-    /// Reconnect a charger to Plugchoice.
+    /// Get a charger already on Plugchoice reaching Plugchoice again. This
+    /// also changes its network (Wi-Fi and the like), so open it from a
+    /// "Network settings" button too.
     public static func reconnect(chargerId: String) -> LinkAction {
         LinkAction(action: "reconnect", chargerId: chargerId)
     }

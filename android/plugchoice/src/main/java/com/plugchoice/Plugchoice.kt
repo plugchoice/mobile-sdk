@@ -16,7 +16,7 @@ import com.plugchoice.internal.Transports
  * val plugchoice = Plugchoice(fetchClientSecret = { action -> backend.plugchoiceClientSecret(action) })
  *
  * private val openLink = registerForActivityResult(plugchoice.link.contract()) { result: LinkResult -> … }
- * openLink.launch(LinkAction.network(chargerId))
+ * openLink.launch(LinkAction.reconnect(chargerId))
  * ```
  *
  * @param fetchClientSecret Returns a client secret your server got from
@@ -34,7 +34,7 @@ public class Plugchoice(
 ) {
     internal val fetchClientSecret: suspend (LinkAction) -> String = fetchClientSecret
 
-    /** Link, the onboarding feature: add a charger, change its network, set it up, reconnect it. */
+    /** Link, the onboarding feature: add a charger, set it up, reconnect it (or change its network). */
     public val link: Link = Link(this)
 
     /**

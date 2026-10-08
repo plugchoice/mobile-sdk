@@ -61,12 +61,12 @@ final class BridgeTests: XCTestCase {
         let close = try close([
             "status": "success",
             "sessionId": "s1",
-            "action": "network",
+            "action": "reconnect",
             "devices": [["type": "charger", "id": "c1"], ["type": "meter", "id": "m1"]],
         ])
         XCTAssertEqual(close, Bridge.SessionClose(
             status: .success,
-            action: "network",
+            action: "reconnect",
             sessionId: "s1",
             devices: [Device(type: "charger", id: "c1"), Device(type: "meter", id: "m1")],
             error: nil

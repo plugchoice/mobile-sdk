@@ -126,7 +126,7 @@ class MainActivity : ComponentActivity() {
 
         // Testing aid, like the iOS example's `-autoOpen`:
         // `adb shell am start -n com.plugchoice.example/.MainActivity --es clientSecret cs_… \
-        //   --es host 10.0.2.2:5173 --es action network --es chargerId 42 --ez autoOpen true`
+        //   --es host 10.0.2.2:5173 --es action reconnect --es chargerId 42 --ez autoOpen true`
         if (savedInstanceState == null) {
             intent.getStringExtra(EXTRA_CLIENT_SECRET)?.let(secretField::setText)
             intent.getStringExtra(EXTRA_HOST)?.let(hostField::setText)
@@ -174,7 +174,6 @@ class MainActivity : ComponentActivity() {
         val siteId = siteIdField.text.toString().trim().ifEmpty { null }
         return when (val name = ACTIONS[actionPicker.selectedItemPosition]) {
             LinkAction.ADD -> LinkAction.addCharger(siteId)
-            LinkAction.NETWORK -> LinkAction.network(chargerId)
             LinkAction.SETUP -> LinkAction.setup(chargerId)
             LinkAction.RECONNECT -> LinkAction.reconnect(chargerId)
             else -> customActionField.text.toString().trim().takeIf { it.isNotEmpty() && name == CUSTOM }
@@ -217,6 +216,6 @@ class MainActivity : ComponentActivity() {
         const val EXTRA_AUTO_OPEN = "autoOpen"
 
         const val CUSTOM = "custom…"
-        val ACTIONS = listOf(LinkAction.ADD, LinkAction.NETWORK, LinkAction.SETUP, LinkAction.RECONNECT, CUSTOM)
+        val ACTIONS = listOf(LinkAction.ADD, LinkAction.SETUP, LinkAction.RECONNECT, CUSTOM)
     }
 }

@@ -6,16 +6,15 @@ package com.plugchoice
  * ```kotlin
  * LinkAction.addCharger()                 // add a charger
  * LinkAction.addCharger(siteId)           // add a charger at a site
- * LinkAction.network(chargerId)           // change a charger's network (Wi-Fi)
  * LinkAction.setup(chargerId)             // set a charger up
- * LinkAction.reconnect(chargerId)         // reconnect a charger to Plugchoice
+ * LinkAction.reconnect(chargerId)         // get a charger reaching Plugchoice again, or change its network
  * LinkAction.custom("later-action", chargerId)
  * ```
  *
  * The SDK passes the action to the page without reading it, so an action the page learns later
  * works through [custom] before it gets a helper here. Empty ids are left out.
  *
- * @property name The action, for example `"add"` or `"network"`.
+ * @property name The action, for example `"add"` or `"reconnect"`.
  */
 public class LinkAction private constructor(
     public val name: String,
@@ -31,7 +30,6 @@ public class LinkAction private constructor(
 
     public companion object {
         public const val ADD: String = "add"
-        public const val NETWORK: String = "network"
         public const val SETUP: String = "setup"
         public const val RECONNECT: String = "reconnect"
 
@@ -40,15 +38,14 @@ public class LinkAction private constructor(
         @JvmOverloads
         public fun addCharger(siteId: String? = null): LinkAction = of(ADD, chargerId = null, siteId = siteId)
 
-        /** Change the network (Wi-Fi) of the charger [chargerId]. */
-        @JvmStatic
-        public fun network(chargerId: String): LinkAction = of(NETWORK, chargerId, siteId = null)
-
         /** Set up the charger [chargerId]. */
         @JvmStatic
         public fun setup(chargerId: String): LinkAction = of(SETUP, chargerId, siteId = null)
 
-        /** Reconnect the charger [chargerId] to Plugchoice. */
+        /**
+         * Get the charger [chargerId], already on Plugchoice, reaching Plugchoice again. This also
+         * changes its network (Wi-Fi and the like), so open it from a "Network settings" button too.
+         */
         @JvmStatic
         public fun reconnect(chargerId: String): LinkAction = of(RECONNECT, chargerId, siteId = null)
 
