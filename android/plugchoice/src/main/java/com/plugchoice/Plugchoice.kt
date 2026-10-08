@@ -82,7 +82,7 @@ public class Plugchoice(
 
     public companion object {
         /** The SDK release, reported to the page as `hello.sdkVersion` (the same on iOS). */
-        public const val SDK_VERSION: String = "0.4.0" // x-release-please-version
+        public const val SDK_VERSION: String = "0.5.0" // x-release-please-version
 
         /** The only origin the screens load and let use the bridge (outside [Options.hostOverride]). */
         public const val ORIGIN: String = "https://connect.plugchoice.com"

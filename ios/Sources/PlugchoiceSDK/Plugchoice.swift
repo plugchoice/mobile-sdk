@@ -16,7 +16,7 @@ import UIKit
 /// screen opens, and again whenever the page's secret has expired.
 public final class Plugchoice: Sendable {
     /// The SDK release, the same on iOS and Android (`hello`'s `sdkVersion`).
-    public static let sdkVersion = "0.4.0" // x-release-please-version
+    public static let sdkVersion = "0.5.0" // x-release-please-version
 
     /// Fetches a client secret (`cs_test_…` or `cs_live_…`) for `action`
     /// from the host app's server, which scopes it to the action's charger or
