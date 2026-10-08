@@ -21,13 +21,13 @@ class InstancesTest {
             seen += action
             "cs_${action.name}_${action.chargerId}"
         })
-        val action = LinkAction.network("42")
+        val action = LinkAction.reconnect("42")
         val id = Instances.register(plugchoice, action)
         try {
             val secrets = ClientSecrets(this, Instances.clientSecretSource(id)!!)
             secrets.prefetch()
-            assertEquals("cs_network_42", secrets.next())
-            assertEquals("cs_network_42", secrets.next())
+            assertEquals("cs_reconnect_42", secrets.next())
+            assertEquals("cs_reconnect_42", secrets.next())
             assertEquals(2, seen.size)
             seen.forEach { assertSame("the very action launched", action, it) }
         } finally {

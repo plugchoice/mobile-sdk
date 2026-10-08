@@ -16,7 +16,6 @@ final class LinkTargetTests: XCTestCase {
     func testEveryActionAndItsIds() {
         let cases: [(LinkAction, String)] = [
             (.addCharger(siteId: "site-1"), "#action=add&site_id=site-1"),
-            (.network(chargerId: "c-1"), "#action=network&charger_id=c-1"),
             (.setup(chargerId: "c-1"), "#action=setup&charger_id=c-1"),
             (.reconnect(chargerId: "c-1"), "#action=reconnect&charger_id=c-1"),
             (.custom("diagnose", chargerId: "c-1"), "#action=diagnose&charger_id=c-1"),
@@ -54,8 +53,8 @@ final class LinkTargetTests: XCTestCase {
     // MARK: - hostOverride
 
     func testOverrideReplacesSchemeHostAndPortInDebug() {
-        let target = LinkTarget(action: .network(chargerId: "c-1"), hostOverride: "http://192.168.1.20:5173", honourOverride: true)
-        XCTAssertEqual(target.url.absoluteString, "http://192.168.1.20:5173/#action=network&charger_id=c-1")
+        let target = LinkTarget(action: .reconnect(chargerId: "c-1"), hostOverride: "http://192.168.1.20:5173", honourOverride: true)
+        XCTAssertEqual(target.url.absoluteString, "http://192.168.1.20:5173/#action=reconnect&charger_id=c-1")
         XCTAssertEqual(target.allowedOrigin.description, "http://192.168.1.20:5173")
         let allowList = OriginAllowList([target.allowedOrigin])
         XCTAssertTrue(allowList.allows(url: target.url))
@@ -95,12 +94,11 @@ final class LinkTargetTests: XCTestCase {
     func testActions() {
         XCTAssertEqual(LinkAction.addCharger(), LinkAction(action: "add"))
         XCTAssertEqual(LinkAction.addCharger(siteId: "s"), LinkAction(action: "add", siteId: "s"))
-        XCTAssertEqual(LinkAction.network(chargerId: "c"), LinkAction(action: "network", chargerId: "c"))
         XCTAssertEqual(LinkAction.setup(chargerId: "c"), LinkAction(action: "setup", chargerId: "c"))
         XCTAssertEqual(LinkAction.reconnect(chargerId: "c"), LinkAction(action: "reconnect", chargerId: "c"))
         XCTAssertEqual(LinkAction.custom("x", chargerId: "c"), LinkAction(action: "x", chargerId: "c"))
-        let network = LinkAction.network(chargerId: "c")
-        XCTAssertEqual([network.action, network.chargerId, network.siteId], ["network", "c", nil])
+        let reconnect = LinkAction.reconnect(chargerId: "c")
+        XCTAssertEqual([reconnect.action, reconnect.chargerId, reconnect.siteId], ["reconnect", "c", nil])
     }
 
     func testTransportsInTheTestHost() {
@@ -125,9 +123,9 @@ final class LinkTargetTests: XCTestCase {
     func testAScreenClosedByTheHostReportsTheOpenedAction() throws {
         let plugchoice = Plugchoice(fetchClientSecret: { _ in "cs_test_secret" })
         var result: LinkResult?
-        let controller = plugchoice.link.makeController(.network(chargerId: "c-1")) { result = $0 }
+        let controller = plugchoice.link.makeController(.reconnect(chargerId: "c-1")) { result = $0 }
         controller.closeForHost()
-        XCTAssertEqual(result, LinkResult(status: .cancelled, action: "network"))
+        XCTAssertEqual(result, LinkResult(status: .cancelled, action: "reconnect"))
     }
 
     @MainActor
@@ -137,8 +135,8 @@ final class LinkTargetTests: XCTestCase {
             LinkResult(status: .cancelled, action: "add", sessionId: nil, devices: [], error: nil)
         )
         XCTAssertEqual(
-            LinkViewController.ownResult(action: "network", loadErrorMessage: "offline"),
-            LinkResult(status: .error, action: "network", error: LinkError(code: "pageLoadFailed", message: "offline"))
+            LinkViewController.ownResult(action: "reconnect", loadErrorMessage: "offline"),
+            LinkResult(status: .error, action: "reconnect", error: LinkError(code: "pageLoadFailed", message: "offline"))
         )
     }
 

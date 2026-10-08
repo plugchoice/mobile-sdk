@@ -47,11 +47,11 @@ describe('openLink', () => {
   });
 
   it('passes chargerId and siteId, and leaves out empty or missing ids', async () => {
-    fake.module.openLink.mockResolvedValue({ status: 'cancelled', action: 'network', devices: [] });
+    fake.module.openLink.mockResolvedValue({ status: 'cancelled', action: 'reconnect', devices: [] });
     const { openLink } = await configured();
 
-    await openLink({ action: 'network', chargerId: 'ch_1' });
-    expect(fake.module.openLink).toHaveBeenLastCalledWith({ action: 'network', chargerId: 'ch_1' }, {});
+    await openLink({ action: 'reconnect', chargerId: 'ch_1' });
+    expect(fake.module.openLink).toHaveBeenLastCalledWith({ action: 'reconnect', chargerId: 'ch_1' }, {});
 
     await openLink({ action: 'add', siteId: 'site_1', chargerId: '' });
     expect(fake.module.openLink).toHaveBeenLastCalledWith({ action: 'add', siteId: 'site_1' }, {});
@@ -107,9 +107,9 @@ describe('openLink', () => {
     fake.module.openLink.mockResolvedValue({ status: 'cancelled', devices: [] });
     const { openLink } = await configured();
 
-    await expect(openLink({ action: 'network', chargerId: 'ch_1' })).resolves.toEqual({
+    await expect(openLink({ action: 'reconnect', chargerId: 'ch_1' })).resolves.toEqual({
       status: 'cancelled',
-      action: 'network',
+      action: 'reconnect',
       sessionId: null,
       devices: [],
     });
@@ -169,7 +169,7 @@ describe('openLink', () => {
     const { openLink } = await configured();
 
     const firstCall = openLink({ action: 'add' });
-    await expect(openLink({ action: 'network', chargerId: 'ch_1' })).rejects.toMatchObject({
+    await expect(openLink({ action: 'reconnect', chargerId: 'ch_1' })).rejects.toMatchObject({
       code: 'ERR_LINK_ALREADY_OPEN',
     });
     expect(fake.module.openLink).toHaveBeenCalledTimes(1);
@@ -179,11 +179,11 @@ describe('openLink', () => {
 
     fake.module.openLink.mockResolvedValueOnce({
       status: 'success',
-      action: 'network',
+      action: 'reconnect',
       sessionId: 'ls_2',
       devices: [{ type: 'charger', id: 'ch_1' }],
     });
-    await expect(openLink({ action: 'network', chargerId: 'ch_1' })).resolves.toMatchObject({
+    await expect(openLink({ action: 'reconnect', chargerId: 'ch_1' })).resolves.toMatchObject({
       status: 'success',
       sessionId: 'ls_2',
     });
@@ -241,7 +241,7 @@ describe('openLink', () => {
       { action: '' },
       { action: '  ' },
       { action: 42 },
-      { action: 'network', chargerId: 42 },
+      { action: 'reconnect', chargerId: 42 },
       { action: 'add', siteId: {} },
     ]) {
       await expect(untyped(action)).rejects.toBeInstanceOf(TypeError);

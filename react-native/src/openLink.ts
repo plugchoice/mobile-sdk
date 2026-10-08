@@ -12,7 +12,7 @@ let isOpen = false;
  * {@link configurePlugchoice} with this action.
  *
  * ```ts
- * const result = await openLink({ action: 'network', chargerId });
+ * const result = await openLink({ action: 'reconnect', chargerId });
  * ```
  *
  * Throws a `TypeError` for an action that isn't `{ action: string, chargerId?, siteId? }`. Rejects
@@ -54,7 +54,7 @@ export async function openLink(action: LinkAction): Promise<LinkResult> {
 /** The action as the native module takes it, or a `TypeError`. */
 function checkedAction(value: unknown): NativeLinkAction {
   if (!isRecord(value)) {
-    throw new TypeError("openLink: pass an action such as { action: 'add' } or { action: 'network', chargerId }");
+    throw new TypeError("openLink: pass an action such as { action: 'add' } or { action: 'reconnect', chargerId }");
   }
   if (typeof value.action !== 'string' || value.action.trim() === '') {
     throw new TypeError('openLink: action.action must be a non-empty string');

@@ -4,8 +4,8 @@
  * names it.
  */
 export type LinkAction = {
-  /** `add`, `network`, `setup`, `reconnect`, or a later one. */
-  action: 'add' | 'network' | 'setup' | 'reconnect' | (string & {});
+  /** `add`, `setup`, `reconnect` (which also changes a charger's network), or a later one. */
+  action: 'add' | 'setup' | 'reconnect' | (string & {});
   /** The charger. Every action but `add` needs one. */
   chargerId?: string;
   /** `add` only: the site to add the charger to. */

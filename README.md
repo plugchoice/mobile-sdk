@@ -17,7 +17,7 @@ Let the people using your app connect their EV chargers to Plugchoice, without l
 
 ## Features
 
-- **Charger setup**: add a charger, set it up, connect it to Wi-Fi, or reconnect it, guided screen by screen.
+- **Charger setup**: add a charger, set it up, or reconnect it (which also changes its network, such as its Wi-Fi), guided screen by screen.
 - **Many brands, no app update**: new charger brands and fixes reach your users without a new release of your app.
 - **One backend endpoint**: your server creates a session, scoped to the chargers your user may touch; the SDK fetches it when it needs one.
 - **Native where it counts**: Wi-Fi hotspots, local network discovery, Bluetooth LE and QR scanning, behind each platform's own permission prompts.

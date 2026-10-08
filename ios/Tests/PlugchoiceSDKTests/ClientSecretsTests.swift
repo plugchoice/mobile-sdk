@@ -43,7 +43,7 @@ final class ClientSecretsTests: XCTestCase {
 
     private struct Failure: Error {}
 
-    private let opened = LinkAction.network(chargerId: "c-1")
+    private let opened = LinkAction.reconnect(chargerId: "c-1")
 
     private func secrets(_ backend: Backend, timeout: TimeInterval = ClientSecrets.defaultTimeout) -> ClientSecrets {
         ClientSecrets(action: opened, fetch: { try await backend.fetch($0) }, timeout: timeout)
@@ -84,7 +84,7 @@ final class ClientSecretsTests: XCTestCase {
         XCTAssertEqual([first, second, third], ["cs_test_1", "cs_test_2", "cs_test_3"])
         XCTAssertEqual(backend.calls, 3)
         XCTAssertEqual(backend.actions, [opened, opened, opened], "refreshes get the same action")
-        XCTAssertEqual(backend.actions.first?.action, "network")
+        XCTAssertEqual(backend.actions.first?.action, "reconnect")
         XCTAssertEqual(backend.actions.first?.chargerId, "c-1")
     }
 

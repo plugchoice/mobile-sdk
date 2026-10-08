@@ -15,7 +15,7 @@ struct ContentView: View {
     }
 
     enum ActionKind: String, CaseIterable, Identifiable {
-        case add, network, setup, reconnect, custom
+        case add, setup, reconnect, custom
         var id: String { rawValue }
     }
 
@@ -180,16 +180,12 @@ struct ContentView: View {
                 return nil
             }
             return .custom(name, chargerId: chargerId.isEmpty ? nil : chargerId)
-        case .network, .setup, .reconnect:
+        case .setup, .reconnect:
             guard !chargerId.isEmpty else {
                 inputError = "Enter the charger's id."
                 return nil
             }
-            switch actionKind {
-            case .network: return .network(chargerId: chargerId)
-            case .setup: return .setup(chargerId: chargerId)
-            default: return .reconnect(chargerId: chargerId)
-            }
+            return actionKind == .setup ? .setup(chargerId: chargerId) : .reconnect(chargerId: chargerId)
         }
     }
 

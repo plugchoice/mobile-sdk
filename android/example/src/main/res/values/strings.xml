@@ -9,7 +9,7 @@
     <string name="action_label">Action</string>
     <string name="custom_action_hint">Action name</string>
     <string name="custom_action_missing">Enter an action name</string>
-    <string name="charger_id_label">Charger id (network, setup, reconnect)</string>
+    <string name="charger_id_label">Charger id (setup, reconnect)</string>
     <string name="charger_id_hint">42</string>
     <string name="site_id_label">Site id (add, optional)</string>
     <string name="site_id_hint">Optional</string>

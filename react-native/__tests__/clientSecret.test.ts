@@ -45,10 +45,10 @@ describe('the client-secret bridge', () => {
     const { configurePlugchoice } = await load();
     configurePlugchoice({ fetchClientSecret });
 
-    const answer = await fake.requestClientSecret({ action: 'network', chargerId: 'ch_1' });
+    const answer = await fake.requestClientSecret({ action: 'reconnect', chargerId: 'ch_1' });
 
     expect(answer).toEqual({ secret: 'cs_test_123' });
-    expect(fetchClientSecret).toHaveBeenCalledWith({ action: 'network', chargerId: 'ch_1' });
+    expect(fetchClientSecret).toHaveBeenCalledWith({ action: 'reconnect', chargerId: 'ch_1' });
     expect(fake.module.provideClientSecret).toHaveBeenCalledWith('request-1', 'cs_test_123');
     expect(fake.module.rejectClientSecret).not.toHaveBeenCalled();
   });
@@ -217,17 +217,17 @@ describe('the client-secret bridge', () => {
     const { configurePlugchoice, openLink } = await load();
     configurePlugchoice({ fetchClientSecret });
 
-    const result = await openLink({ action: 'network', chargerId: 'ch_1' });
+    const result = await openLink({ action: 'reconnect', chargerId: 'ch_1' });
 
     expect(result).toEqual({
       status: 'success',
-      action: 'network',
+      action: 'reconnect',
       sessionId: 'ls_1',
       devices: [{ type: 'charger', id: 'ch_1' }],
     });
     expect(fetchClientSecret.mock.calls).toEqual([
-      [{ action: 'network', chargerId: 'ch_1' }],
-      [{ action: 'network', chargerId: 'ch_1' }],
+      [{ action: 'reconnect', chargerId: 'ch_1' }],
+      [{ action: 'reconnect', chargerId: 'ch_1' }],
     ]);
   });
 

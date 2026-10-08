@@ -61,13 +61,13 @@ class BridgeTest {
             json(
                 "status" to "success",
                 "sessionId" to "ls_1",
-                "action" to "network",
+                "action" to "reconnect",
                 "devices" to JSONArray().put(json("type" to "charger", "id" to "42")).put(json("type" to "meter", "id" to "m1")),
             ),
-            openedAction = "network",
+            openedAction = "reconnect",
         )
         assertEquals(
-            LinkResult(LinkResult.Status.SUCCESS, "network", "ls_1", listOf(Device("charger", "42"), Device("meter", "m1"))),
+            LinkResult(LinkResult.Status.SUCCESS, "reconnect", "ls_1", listOf(Device("charger", "42"), Device("meter", "m1"))),
             result,
         )
     }

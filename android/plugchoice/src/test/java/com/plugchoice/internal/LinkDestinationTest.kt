@@ -18,7 +18,6 @@ class LinkDestinationTest {
     fun `the URL carries the action and ids in the fragment`() {
         assertEquals("https://connect.plugchoice.com/#action=add", resolve(LinkAction.addCharger()).url)
         assertEquals("https://connect.plugchoice.com/#action=add&site_id=site_1", resolve(LinkAction.addCharger("site_1")).url)
-        assertEquals("https://connect.plugchoice.com/#action=network&charger_id=42", resolve(LinkAction.network("42")).url)
         assertEquals("https://connect.plugchoice.com/#action=setup&charger_id=42", resolve(LinkAction.setup("42")).url)
         assertEquals("https://connect.plugchoice.com/#action=reconnect&charger_id=42", resolve(LinkAction.reconnect("42")).url)
         assertEquals(
@@ -42,7 +41,7 @@ class LinkDestinationTest {
     @Test
     fun `empty ids are left out`() {
         assertEquals("action=add", LinkDestination.fragment(LinkAction.addCharger("")))
-        assertNull(LinkAction.custom("network", chargerId = "").chargerId)
+        assertNull(LinkAction.custom("reconnect", chargerId = "").chargerId)
     }
 
     @Test
@@ -58,8 +57,8 @@ class LinkDestinationTest {
 
     @Test
     fun `actions compare by value`() {
-        assertEquals(LinkAction.network("42"), LinkAction.custom("network", "42"))
-        assertEquals(LinkAction.network("42").hashCode(), LinkAction.custom("network", "42").hashCode())
+        assertEquals(LinkAction.reconnect("42"), LinkAction.custom("reconnect", "42"))
+        assertEquals(LinkAction.reconnect("42").hashCode(), LinkAction.custom("reconnect", "42").hashCode())
         assertEquals("add", LinkAction.addCharger().name)
     }
 
@@ -73,8 +72,8 @@ class LinkDestinationTest {
     @Test
     fun `the override replaces scheme, host and port in debug builds`() {
         val ignored = mutableListOf<String>()
-        val destination = resolve(LinkAction.network("42"), "http://192.168.1.20:5173", ignored = ignored)
-        assertEquals("http://192.168.1.20:5173/#action=network&charger_id=42", destination.url)
+        val destination = resolve(LinkAction.reconnect("42"), "http://192.168.1.20:5173", ignored = ignored)
+        assertEquals("http://192.168.1.20:5173/#action=reconnect&charger_id=42", destination.url)
         assertEquals("http://192.168.1.20:5173", destination.origin)
         assertTrue(ignored.isEmpty())
     }

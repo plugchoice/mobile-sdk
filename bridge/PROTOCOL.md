@@ -34,7 +34,7 @@ The host app creates one SDK instance with a callback that fetches a **client se
 
 Before showing anything the shell:
 
-1. Builds `https://connect.plugchoice.com/#action=<action>`, plus `&charger_id=<id>` and `&site_id=<id>` when given (and not empty), each value percent-encoded (everything but RFC 3986's unreserved characters). The action is an open string (`add`, `network`, `setup`, `reconnect`, or a later one) that the shell passes on without reading it. The URL never holds the secret.
+1. Builds `https://connect.plugchoice.com/#action=<action>`, plus `&charger_id=<id>` and `&site_id=<id>` when given (and not empty), each value percent-encoded (everything but RFC 3986's unreserved characters). The action is an open string (`add`, `setup`, `reconnect`, or a later one) that the shell passes on without reading it. The URL never holds the secret.
 2. Uses `https://connect.plugchoice.com` as the **only** allowed origin, for the bridge and for main-frame navigation (an explicit `:443` is the same origin).
 3. **Debug override**: `options.hostOverride` (for example `http://192.168.1.20:5173`, a local copy of the page) replaces the scheme, host and port and becomes the only allowed origin. It must be `http` or `https`, a host and an optional port, with at most a trailing `/`. It is honoured only in debug builds of the host app (iOS: `#if DEBUG`, as the package builds from source with the app's configuration; Android: the app's `FLAG_DEBUGGABLE`), and otherwise ignored with a log line, as is a malformed one.
 4. Calls the host's callback once with the action, in parallel with loading the page, and keeps the answer for the page's first `auth.clientSecret` (§7).
