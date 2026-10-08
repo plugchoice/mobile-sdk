@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.plugchoice"
-version = "0.4.0" // x-release-please-version
+version = "0.5.0" // x-release-please-version
 
 android {
     namespace = "com.plugchoice.reactnative"

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0](https://github.com/plugchoice/mobile-sdk/compare/0.4.0...0.5.0) (2026-10-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop the network action, use reconnect ([#8](https://github.com/plugchoice/mobile-sdk/issues/8))
+
+### Features
+
+* drop the network action, use reconnect ([#8](https://github.com/plugchoice/mobile-sdk/issues/8)) ([7571bc1](https://github.com/plugchoice/mobile-sdk/commit/7571bc14c98dabdaee7e5bc66c8c3859a05866ee))
+
 ## [0.4.0](https://github.com/plugchoice/mobile-sdk/compare/0.3.0...0.4.0) (2026-10-07)
 
 
