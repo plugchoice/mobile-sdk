@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/plugchoice/mobile-sdk/compare/0.5.0...0.6.0) (2026-10-09)
+
+
+### Features
+
+* return binary response bodies as base64 on request ([#10](https://github.com/plugchoice/mobile-sdk/issues/10)) ([5a71ad1](https://github.com/plugchoice/mobile-sdk/commit/5a71ad1b606d4f6828e82cf4a0a1813f30453e0f))
+
 ## [0.5.0](https://github.com/plugchoice/mobile-sdk/compare/0.4.0...0.5.0) (2026-10-08)
 
 
