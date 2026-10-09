@@ -51,6 +51,7 @@ internal class HttpSessions(
         val headers: Map<String, String>,
         val body: String?,
         val timeoutMs: Long,
+        val responseBody: Http1.ResponseBody = Http1.ResponseBody.TEXT,
     )
 
     private val lock = Any()
@@ -188,7 +189,7 @@ internal class HttpSessions(
                     // session gone.
                     closeConnection()
                 }
-                answer(pending, Result.success(response.toJson()))
+                answer(pending, Result.success(response.toJson(request.responseBody)))
             } catch (e: IOException) {
                 closeConnection()
                 val error = when {
@@ -306,7 +307,7 @@ internal class HttpSessions(
             val body = params.optStringOrNull("body")
             if (method == "GET" && !body.isNullOrEmpty()) throw BridgeException.invalidParams("a GET request cannot have a body")
             val timeoutMs = params.requireTimeoutMs("timeoutMs")
-            return sessionId to Request(method, path, headers, if (method == "GET") null else body, timeoutMs)
+            return sessionId to Request(method, path, headers, if (method == "GET") null else body, timeoutMs, Http1.ResponseBody.parse(params))
         }
     }
 }

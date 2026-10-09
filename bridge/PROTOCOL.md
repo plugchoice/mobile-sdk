@@ -224,10 +224,11 @@ Anything else, a percent-encoded host, and for URLs another scheme answer `forbi
 
 | Method | Params | Result |
 |---|---|---|
-| `http.request` | `{ requestId: string, url: string, method: "GET" \| "POST" \| "PUT" \| "PATCH" \| "DELETE", headers?, body?: string, timeoutMs: number, trust?: Trust }` | `{ status: number, headers: Record<string, string>, body: string }` |
+| `http.request` | `{ requestId: string, url: string, method: "GET" \| "POST" \| "PUT" \| "PATCH" \| "DELETE", headers?, body?: string, timeoutMs: number, trust?: Trust, responseBody?: "text" \| "base64" }` | `{ status: number, headers: Record<string, string>, body: string }` |
 | `http.cancel` | `{ requestId: string }` | `{}`; the request then answers `cancelled` (an unknown id is fine) |
 
 - `url` is `http` or `https`; `trust` applies to `https` only. `method` is case-insensitive.
+- `responseBody` (absent: `text`): `text` answers the body decoded as UTF-8, so bytes that aren't UTF-8 are replaced; `base64` answers it as base64 of its bytes, for a binary body such as an archive. Anything else is `invalidParams`.
 - `timeoutMs` is a deadline for the whole request.
 - A `GET` can't have a body (an empty one is none). A `requestId` already in flight is `invalidParams`.
 
@@ -280,13 +281,14 @@ A kept-alive HTTPS connection to one device, for devices that keep their login o
 | Method | Params | Result |
 |---|---|---|
 | `http.session.open` | `{ host: string, port?: number, trust?: Trust, timeoutMs?: number }` | `{ sessionId: string }` |
-| `http.session.request` | `{ sessionId: string, method: "GET" \| "POST" \| "PUT", path: string, headers?, body?: string, timeoutMs: number }` | `{ status: number, headers: Record<string, string>, body: string }` |
+| `http.session.request` | `{ sessionId: string, method: "GET" \| "POST" \| "PUT", path: string, headers?, body?: string, timeoutMs: number, responseBody?: "text" \| "base64" }` | `{ status: number, headers: Record<string, string>, body: string }` |
 | `http.session.close` | `{ sessionId: string }` | `{}` |
 
 - `open` makes the TCP and TLS handshake: `port` defaults to 443; `timeoutMs` defaults to 10 s and is clamped to 500 ms to 30 s (a subnet sweep probes with a short one). A refused or unreachable host fails with `network` as soon as the OS says so.
 - **One connection per session**, never shared, pooled or silently replaced. Requests on a session run one at a time, in the order sent.
 - A request's `timeoutMs` counts from when the shell receives it, so waiting behind earlier requests counts. A request that times out before it was sent leaves the session alone; once sent, `timeout` ends the session (the device may still answer, out of step). `network` ends it too. A request on an ended session answers `unknownSession`. When the device ends the connection after an answer (`Connection: close`, or a body that runs until the connection closes), that answer comes through and the next request answers `network`.
 - `path` starts with `/` and holds printable ASCII without spaces or `#` (a query is fine). The body is sent with an explicit `Content-Length`, never chunked; a `GET` can't have one. The shell writes `Host` and `Content-Length` itself and drops the page's `Host`, `Content-Length`, `Transfer-Encoding` and `Connection`.
+- `responseBody` as for `http.request` (§9.2).
 - `close` is idempotent; requests still waiting answer `network`.
 - At most 64 sessions, opening ones included (`tooManySessions`).
 - `tls` only when the certificate didn't verify; any other failed handshake (plain HTTP on that port, for example) is `network`.

@@ -22,8 +22,22 @@ enum HTTP1 {
         /// The device closes the connection after this response.
         let closesConnection: Bool
 
-        var json: JSONObject {
-            ["status": status, "headers": headers, "body": String(decoding: body, as: UTF8.self)]
+        func json(_ encoding: ResponseBody) -> JSONObject {
+            ["status": status, "headers": headers, "body": encoding.encode(body)]
+        }
+    }
+
+    /// How a response body reaches the page (PROTOCOL §9.2): as UTF-8 text,
+    /// or as base64 of its bytes, for a binary body such as an archive.
+    enum ResponseBody: String {
+        case text
+        case base64
+
+        func encode(_ body: Data) -> String {
+            switch self {
+            case .text: String(decoding: body, as: UTF8.self)
+            case .base64: body.base64EncodedString()
+            }
         }
     }
 

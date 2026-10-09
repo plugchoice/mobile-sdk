@@ -102,6 +102,7 @@ internal class LocalNetworkClient(
         val headers = buildHeaders(params.optHeaders())
         val body = params.optStringOrNull("body")
         val timeoutMs = params.requireTimeoutMs("timeoutMs")
+        val responseBody = Http1.ResponseBody.parse(params)
         val evaluator = Trust.parse(params.opt("trust"))?.takeIf { url.isHttps }?.let { TrustEvaluator(it, url.host) }
 
         val request = Request.Builder()
@@ -121,7 +122,7 @@ internal class LocalNetworkClient(
             throw BridgeException.invalidParams("requestId $requestId is already in flight")
         }
         try {
-            return call.awaitResult()
+            return call.awaitResult(responseBody)
         } catch (e: IOException) {
             throw when {
                 cancelledByPage.contains(requestId) ->
@@ -234,7 +235,7 @@ internal class LocalNetworkClient(
         return body.toByteArray(Charsets.UTF_8).toRequestBody(headers["Content-Type"]?.toMediaTypeOrNull())
     }
 
-    private suspend fun Call.awaitResult(): JSONObject = suspendCancellableCoroutine { continuation ->
+    private suspend fun Call.awaitResult(responseBody: Http1.ResponseBody): JSONObject = suspendCancellableCoroutine { continuation ->
         continuation.invokeOnCancellation { cancel() }
         enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -243,7 +244,7 @@ internal class LocalNetworkClient(
 
             override fun onResponse(call: Call, response: Response) {
                 val result = try {
-                    response.use { toResult(it) }
+                    response.use { toResult(it, responseBody) }
                 } catch (e: IOException) {
                     continuation.resumeWithException(e)
                     return
@@ -253,7 +254,7 @@ internal class LocalNetworkClient(
         })
     }
 
-    private fun toResult(response: Response): JSONObject {
+    private fun toResult(response: Response, responseBody: Http1.ResponseBody): JSONObject {
         // Lower-cased names; repeated headers (Set-Cookie in particular) joined with ", ".
         val grouped = LinkedHashMap<String, MutableList<String>>()
         for (i in 0 until response.headers.size) {
@@ -266,7 +267,7 @@ internal class LocalNetworkClient(
         return JSONObject()
             .put("status", response.code)
             .put("headers", headers)
-            .put("body", String(bytes, Charsets.UTF_8))
+            .put("body", responseBody.encode(bytes))
     }
 
     /** One `ws.*` socket. Events go out in OkHttp's order; `ws.close` is always the last one. */

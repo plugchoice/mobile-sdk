@@ -156,6 +156,12 @@ class HttpSessionsTest {
         assertEquals(2500L, request.timeoutMs)
         assertNull("an empty body on GET is no body", HttpSessions.parseRequest(requestParams("body" to "")).second.body)
         assertEquals(emptyMap<String, String>(), HttpSessions.parseRequest(requestParams().apply { remove("headers") }).second.headers)
+        // The body comes as text unless asked for as base64.
+        assertEquals(Http1.ResponseBody.TEXT, HttpSessions.parseRequest(requestParams()).second.responseBody)
+        assertEquals(Http1.ResponseBody.BASE64, HttpSessions.parseRequest(requestParams("responseBody" to "base64")).second.responseBody)
+        for (bad in listOf("binary", "BASE64", 1, true)) {
+            assertCode(ErrorCode.INVALID_PARAMS) { HttpSessions.parseRequest(requestParams("responseBody" to bad)) }
+        }
     }
 
     @Test
