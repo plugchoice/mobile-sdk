@@ -13,7 +13,7 @@ plugins {
 // this repository's root build, android/build.gradle.kts; a composite build (`includeBuild`)
 // substitutes this project for the coordinates.
 group = "com.plugchoice"
-version = "0.5.0" // x-release-please-version
+version = "0.6.0" // x-release-please-version
 
 android {
     namespace = "com.plugchoice"
