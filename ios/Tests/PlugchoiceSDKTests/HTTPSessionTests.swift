@@ -169,6 +169,20 @@ final class HTTPSessionTests: XCTestCase {
         ])
     }
 
+    func testABinaryBodyAsBase64() throws {
+        let (id, connection) = try open()
+        let answers = Answers()
+        var request = get("/Transactions/download.php")
+        request.responseBody = .base64
+        try sessions.request(sessionId: id, request, completion: answers.add)
+        // A gzip header: not UTF-8, so text would have lost it.
+        let gzip = Data([0x1F, 0x8B, 0x08, 0x00, 0xFF])
+        connection.deliverResult(.success((Data("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 5\r\n\r\n".utf8) + gzip, false)))
+        let result = try XCTUnwrap(answers.results.first).get()
+        XCTAssertEqual(result["body"] as? String, gzip.base64EncodedString())
+        XCTAssertEqual(Data(base64Encoded: try XCTUnwrap(result["body"] as? String)), gzip)
+    }
+
     func testAnEmptyPostStillSendsContentLength() throws {
         let (id, connection) = try open()
         try sessions.request(

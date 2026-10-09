@@ -25,6 +25,16 @@ class Http1Test {
     }
 
     @Test
+    fun `a binary body as base64, and as text by default`() {
+        // A gzip header: not UTF-8, so text would lose it.
+        val gzip = byteArrayOf(0x1F, 0x8B.toByte(), 0x08, 0x00, 0xFF.toByte())
+        val response = Http1.readResponse(ByteArrayInputStream("HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\n".toByteArray() + gzip))
+        assertEquals("H4sIAP8=", response.toJson(Http1.ResponseBody.BASE64).getString("body"))
+        assertTrue(java.util.Base64.getDecoder().decode(response.toJson(Http1.ResponseBody.BASE64).getString("body")).contentEquals(gzip))
+        assertEquals("ok", read("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nok").toJson().getString("body"))
+    }
+
+    @Test
     fun `a Content-Length body`() {
         val response = read("HTTP/1.1 200 OK\r\nContent-Length: 11\r\n\r\nhello world")
         assertEquals(200, response.status)

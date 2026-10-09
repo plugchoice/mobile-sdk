@@ -24,6 +24,7 @@ final class HTTPService {
         let timeoutMs: Int
         /// Only for `https`; nil: the system's trust.
         var trust: Trust?
+        var responseBody: HTTP1.ResponseBody = .text
     }
 
     private enum StopReason {
@@ -36,13 +37,15 @@ final class HTTPService {
         /// The request's own session (a page's trust), invalidated after it.
         let ownSession: URLSession?
         let delegate: HTTPTaskDelegate
+        let responseBody: HTTP1.ResponseBody
         var stopReason: StopReason?
         var timer: DispatchWorkItem?
 
-        init(task: URLSessionDataTask, ownSession: URLSession?, delegate: HTTPTaskDelegate) {
+        init(task: URLSessionDataTask, ownSession: URLSession?, delegate: HTTPTaskDelegate, responseBody: HTTP1.ResponseBody) {
             self.task = task
             self.ownSession = ownSession
             self.delegate = delegate
+            self.responseBody = responseBody
         }
     }
 
@@ -104,7 +107,7 @@ final class HTTPService {
                 self?.finish(requestId: requestId, data: data, response: response, error: error, completion: completion)
             }
         }
-        let entry = Pending(task: task, ownSession: ownSession, delegate: delegate)
+        let entry = Pending(task: task, ownSession: ownSession, delegate: delegate, responseBody: request.responseBody)
         let timer = DispatchWorkItem { [weak self, weak entry] in
             MainActor.assumeIsolated {
                 guard let self, let entry, self.pending[requestId] === entry else { return }
@@ -168,7 +171,7 @@ final class HTTPService {
         completion(.success([
             "status": http.statusCode,
             "headers": Self.lowerCasedHeaders(http),
-            "body": String(decoding: data ?? Data(), as: UTF8.self),
+            "body": entry.responseBody.encode(data ?? Data()),
         ]))
     }
 

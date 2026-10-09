@@ -42,6 +42,7 @@ final class HTTPSessions {
         let headers: [String: String]
         let body: String?
         let timeoutMs: Int
+        var responseBody: HTTP1.ResponseBody = .text
     }
 
     typealias Completion = (Result<JSONObject, BridgeError>) -> Void
@@ -262,7 +263,7 @@ final class HTTPSession {
             // request finds the session gone.
             closeConnection()
         }
-        finish(pending, .success(response.json))
+        finish(pending, .success(response.json(pending.request.responseBody)))
         startNext()
     }
 

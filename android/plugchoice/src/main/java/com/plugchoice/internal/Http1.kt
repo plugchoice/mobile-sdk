@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.InputStream
 import java.net.ProtocolException
+import java.util.Base64
 import java.util.Locale
 
 /**
@@ -31,13 +32,34 @@ internal object Http1 {
         /** The device closes the connection after this response. */
         val closesConnection: Boolean,
     ) {
-        fun toJson(): JSONObject {
+        fun toJson(responseBody: ResponseBody = ResponseBody.TEXT): JSONObject {
             val headerObject = JSONObject()
             for ((name, value) in headers) headerObject.put(name, value)
             return JSONObject()
                 .put("status", status)
                 .put("headers", headerObject)
-                .put("body", String(body, Charsets.UTF_8))
+                .put("body", responseBody.encode(body))
+        }
+    }
+
+    /** How a response body reaches the page (PROTOCOL §9.2): as UTF-8 text, or as base64 of its bytes, for a binary body such as an archive. */
+    enum class ResponseBody(val param: String) {
+        TEXT("text"),
+        BASE64("base64");
+
+        fun encode(body: ByteArray): String = when (this) {
+            TEXT -> String(body, Charsets.UTF_8)
+            BASE64 -> Base64.getEncoder().encodeToString(body)
+        }
+
+        companion object {
+            /** `responseBody` (absent: `text`). */
+            fun parse(params: JSONObject): ResponseBody {
+                if (!params.has("responseBody") || params.isNull("responseBody")) return TEXT
+                val value = params.opt("responseBody")
+                return entries.firstOrNull { it.param == value }
+                    ?: throw BridgeException.invalidParams("responseBody must be text or base64")
+            }
         }
     }
 

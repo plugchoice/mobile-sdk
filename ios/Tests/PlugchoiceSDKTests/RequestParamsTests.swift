@@ -98,6 +98,13 @@ final class RequestParamsTests: XCTestCase {
         var noHeaders = requestParams()
         noHeaders.removeValue(forKey: "headers")
         XCTAssertEqual(try Bridge.sessionRequest(Params(noHeaders)).request.headers, [:])
+        // The body comes as text unless asked for as base64.
+        XCTAssertEqual(request.responseBody, .text)
+        XCTAssertEqual(try Bridge.sessionRequest(Params(requestParams(["responseBody": "base64"]))).request.responseBody, .base64)
+        XCTAssertEqual(try Bridge.sessionRequest(Params(requestParams(["responseBody": "text"]))).request.responseBody, .text)
+        for bad: Any in ["binary", "BASE64", 1, true] {
+            assertCode("invalidParams", "\(bad)") { _ = try Bridge.sessionRequest(Params(requestParams(["responseBody": bad]))) }
+        }
     }
 
     func testSessionRequestRejectsBadParams() {
@@ -147,6 +154,12 @@ final class RequestParamsTests: XCTestCase {
         var params: JSONObject = ["requestId": "r1", "url": "https://192.168.1.10/api", "method": "GET", "headers": [:], "timeoutMs": 2500]
         for (key, value) in overrides { params[key] = value }
         return params
+    }
+
+    func testHTTPRequestTakesAResponseBody() throws {
+        XCTAssertEqual(try Bridge.httpRequest(Params(httpParams())).responseBody, .text)
+        XCTAssertEqual(try Bridge.httpRequest(Params(httpParams(["responseBody": "base64"]))).responseBody, .base64)
+        assertCode("invalidParams", "binary") { _ = try Bridge.httpRequest(Params(httpParams(["responseBody": "binary"]))) }
     }
 
     func testHTTPRequestTakesATrust() throws {

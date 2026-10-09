@@ -425,8 +425,19 @@ final class Bridge {
             headers: headers,
             body: method == "GET" ? nil : body,
             timeoutMs: timeoutMs,
-            trust: trust
+            trust: trust,
+            responseBody: try responseBody(params)
         )
+    }
+
+    /// `responseBody` (absent: `text`): the body as UTF-8 text, or as base64
+    /// of its bytes (PROTOCOL §9.2).
+    static func responseBody(_ params: Params) throws -> HTTP1.ResponseBody {
+        guard let value = try params.optionalString("responseBody") else { return .text }
+        guard let encoding = HTTP1.ResponseBody(rawValue: value) else {
+            throw BridgeError.invalidParams("responseBody must be text or base64")
+        }
+        return encoding
     }
 
     struct WebSocketOpenRequest {
@@ -633,7 +644,8 @@ final class Bridge {
             path: path,
             headers: headers,
             body: method == "GET" ? nil : body,
-            timeoutMs: try params.timeoutMs()
+            timeoutMs: try params.timeoutMs(),
+            responseBody: try responseBody(params)
         )
         return (sessionId, request)
     }
