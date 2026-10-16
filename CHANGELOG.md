@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/plugchoice/mobile-sdk/compare/0.6.0...0.7.0) (2026-10-16)
+
+
+### Features
+
+* auth.webSession, sign-in in the system's web authentication sheet ([#13](https://github.com/plugchoice/mobile-sdk/issues/13)) ([2823e20](https://github.com/plugchoice/mobile-sdk/commit/2823e20ae0835cea27bffff358ab5b7cf1adacb2))
+
 ## [0.6.0](https://github.com/plugchoice/mobile-sdk/compare/0.5.0...0.6.0) (2026-10-09)
 
 
