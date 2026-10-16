@@ -1,6 +1,6 @@
 # Plugchoice bridge protocol, version 1
 
-The contract between the hosted page at `https://connect.plugchoice.com` and the native shells in this repository (`ios/`, `android/`). The page runs the flow (setting up a charger, today); the shell only does what a web page can't: join a device's Wi-Fi, find devices on the local network and talk HTTP, WebSocket, TCP and UDP to them, talk Bluetooth, scan a code with the camera, fetch the client secret from the host app, and close the screen with a result.
+The contract between the hosted page at `https://connect.plugchoice.com` and the native shells in this repository (`ios/`, `android/`). The page runs the flow (setting up a charger, today); the shell only does what a web page can't: join a device's Wi-Fi, find devices on the local network and talk HTTP, WebSocket, TCP and UDP to them, talk Bluetooth, scan a code with the camera, fetch the client secret from the host app, open the system sign-in sheet for Google and Apple, and close the screen with a result.
 
 Design rules:
 
@@ -111,6 +111,7 @@ The page sends `hello` first and waits for the answer before anything else.
 | `lan.discover` | `lan.discover`, `lan.stopDiscovery` (§9.4) | iOS: the host declares at least one `NSBonjourServices` type. Android: always |
 | `http.session` | `http.session.open`, `.request`, `.close` (§9.5) | Always |
 | `auth.clientSecret` | `auth.clientSecret` (§7) | Always |
+| `auth.webSession` | `auth.webSession` (§7.1) | iOS: always. Android: the default browser supports Auth Tab |
 | `ble` | `ble.*` (§11) | The device has Bluetooth LE, and iOS: the host has `NSBluetoothAlwaysUsageDescription`; Android: the host kept the library's Bluetooth permissions |
 | `tcp` | `tcp.open`, `tcp.write`, `tcp.close` (§9.6) | Always |
 | `udp` | `udp.exchange` (§9.7) | Always |
@@ -164,6 +165,19 @@ When the shell closes by itself, it reports the action it opened with, no `sessi
 - The first call answers with the secret fetched when the screen opened (§2), waiting for that fetch if needed. Every later call runs the host's callback again, with the same action; the page calls it when its secret has expired.
 - `clientSecretUnavailable`: the callback threw, returned an empty (or blank) string, or took longer than 30 s. The page shows its error screen with **Try again**, which calls `auth.clientSecret` again.
 - The shell never logs the secret and keeps no copy after answering.
+
+### 7.1 `auth.webSession`
+
+| Params | Result | Errors |
+|---|---|---|
+| `{ url: string }` | `{ callbackUrl: string }` | `userCancelled`, `unavailable` |
+
+- Signing in with Google or Apple. Google refuses to sign in inside an embedded web view, so the shell opens `url` (an `https` URL from core's sign-in hop) in the system's sign-in sheet, outside the page. The sheet closes when it reaches a URL with the scheme `plugchoice-link`, and `callbackUrl` is that URL, as the page reads it (core puts the result in its fragment).
+- The host app needs nothing: the sheet catches the scheme itself, and no app has to register it. Whatever comes back is worth nothing without the run's credential, which only the page holds.
+- `userCancelled`: the user closed the sheet. `unavailable`: a sheet is already showing, or the system couldn't show one. A `url` that isn't `https` is `invalidParams`.
+- iOS: `ASWebAuthenticationSession` with callback scheme `plugchoice-link`, sharing Safari's cookies (not ephemeral: someone signed in to Google in Safari picks their account in one tap). iOS asks first whether the app may use the website to sign in.
+- Android: Chrome's Auth Tab (androidx.browser `AuthTabIntent`) with the same scheme. Listed only when the default browser supports Auth Tab; elsewhere the page keeps sign-in by code. No intent filter is involved, so apps with the SDK never compete for the scheme.
+- `callbackUrl` holds a one-time code: shells never log it.
 
 ## 8. Wi-Fi
 
@@ -417,7 +431,7 @@ Not AccessorySetupKit: declaring it for Bluetooth limits CoreBluetooth in the wh
 | `udp.exchange` | `timeoutMs` clamped to 100 ms to 30 s; `maxReplies` 1 to 1000; a datagram up to 65 507 bytes |
 | `ble.scan`, `ble.connect` | `timeoutMs` clamped to 1 s to 60 s |
 | Bluetooth request | 10 s; `ble.write` up to 512 bytes; `mtu` 23 to 517 |
-| At once | 1 `lan.discover`, 1 `ble.scan`, 1 `camera.scanCode`; 64 sessions, 16 TCP sockets, 8 Bluetooth connections |
+| At once | 1 `lan.discover`, 1 `ble.scan`, 1 `camera.scanCode`, 1 `auth.webSession`; 64 sessions, 16 TCP sockets, 8 Bluetooth connections |
 
 ## 13. Error codes
 
@@ -433,7 +447,7 @@ Not AccessorySetupKit: declaring it for Bluetooth limits CoreBluetooth in the wh
 | `undeclaredServiceType`, `busy` | `lan.discover` (`undeclaredServiceType` iOS); `busy` also `ble.scan`, `ble.connect` |
 | `unknownSession`, `tooManySessions` | `http.session.*` |
 | `unknownSocket`, `tooManySockets` | `tcp.*` |
-| `userCancelled`, `cameraPermissionDenied`, `unavailable` | `camera.scanCode`; `unavailable` also `ble.*` |
+| `userCancelled`, `cameraPermissionDenied`, `unavailable` | `camera.scanCode`; `userCancelled` and `unavailable` also `auth.webSession`; `unavailable` also `ble.*` |
 | `bluetoothOff`, `bluetoothPermissionDenied`, `unknownDevice`, `notConnected`, `unknownCharacteristic`, `notPermitted`, `tooManyConnections`, `gatt` | `ble.*` |
 
 `LinkResult.error` codes the shell sets itself: `pageLoadFailed` and `internal` (§6.3). Every other code comes from the page.

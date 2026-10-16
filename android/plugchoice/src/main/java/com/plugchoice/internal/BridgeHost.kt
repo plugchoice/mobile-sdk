@@ -1,6 +1,8 @@
 package com.plugchoice.internal
 
 import android.content.Context
+import android.net.Uri
+import androidx.browser.auth.AuthTabIntent
 import com.plugchoice.LinkResult
 
 /** What the bridge needs from the activity hosting it. All calls happen on the main thread. */
@@ -10,6 +12,9 @@ internal interface BridgeHost {
 
     /** Runtime permission request through the activity; returns permission → granted. */
     suspend fun requestPermissions(permissions: Array<String>): Map<String, Boolean>
+
+    /** `auth.webSession`: opens [url] in an Auth Tab that closes on [scheme], and waits for how it ended. */
+    suspend fun openAuthTab(url: Uri, scheme: String): AuthTabIntent.AuthResult
 
     /** `session.close`, or the shell closing on its own: dismiss the Link screen and hand [result] to the host app. */
     fun closeSession(result: LinkResult)

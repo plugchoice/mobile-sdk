@@ -53,6 +53,24 @@ class BridgeTest {
         assertEquals(LinkBridge.capabilities(bluetoothAvailable = true) - "ble", LinkBridge.capabilities(bluetoothAvailable = false))
     }
 
+    @Test
+    fun `auth webSession only where the browser has Auth Tab`() {
+        val with = LinkBridge.capabilities(bluetoothAvailable = false, webSessionAvailable = true)
+        assertTrue("auth.webSession" in with)
+        assertEquals(with - "auth.webSession", LinkBridge.capabilities(bluetoothAvailable = false))
+    }
+
+    @Test
+    fun `a web session opens https URLs only`() {
+        assertTrue(WebSignIn.isWebSessionUrl("https://app.plugchoice.com/auth/google/link-run?ticket=t"))
+        assertFalse(WebSignIn.isWebSessionUrl(null))
+        assertFalse(WebSignIn.isWebSessionUrl(""))
+        assertFalse(WebSignIn.isWebSessionUrl("http://app.plugchoice.com/auth"))
+        assertFalse(WebSignIn.isWebSessionUrl("plugchoice-link://auth"))
+        assertFalse(WebSignIn.isWebSessionUrl("https://"))
+        assertFalse(WebSignIn.isWebSessionUrl("https://exa mple.com"))
+    }
+
     // session.close
 
     @Test

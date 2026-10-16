@@ -29,6 +29,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.browser.auth.AuthTabIntent
 import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
@@ -90,6 +91,15 @@ internal class LinkActivity : ComponentActivity() {
             pendingPermissions = null
         }
 
+    private var pendingAuthTab: CompletableDeferred<AuthTabIntent.AuthResult>? = null
+
+    // auth.webSession: the Auth Tab answers this activity directly (no intent filter).
+    private val authTabLauncher =
+        AuthTabIntent.registerActivityResultLauncher(this) { result ->
+            pendingAuthTab?.complete(result)
+            pendingAuthTab = null
+        }
+
     private val host = object : BridgeHost {
         override val hostContext: Context
             get() = this@LinkActivity
@@ -101,6 +111,13 @@ internal class LinkActivity : ComponentActivity() {
                 permissionLauncher.launch(permissions)
                 deferred.await()
             }
+
+        override suspend fun openAuthTab(url: Uri, scheme: String): AuthTabIntent.AuthResult {
+            val deferred = CompletableDeferred<AuthTabIntent.AuthResult>()
+            pendingAuthTab = deferred
+            AuthTabIntent.Builder().build().launch(authTabLauncher, url, scheme)
+            return deferred.await()
+        }
 
         override fun closeSession(result: LinkResult) {
             finishWith(result)

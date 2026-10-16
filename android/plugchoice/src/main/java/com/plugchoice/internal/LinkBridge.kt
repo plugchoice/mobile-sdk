@@ -48,6 +48,7 @@ internal class LinkBridge(
     private val wifi: WifiController = WifiController(host, onNetworkChanged = { net.onNetworkChanged() })
     private val net: LocalNetworkClient = LocalNetworkClient(wifi, emit = this::emitEvent)
     private val scanner = CodeScanner(host)
+    private val webSignIn = WebSignIn(host)
     private val discovery = LanDiscovery(host.hostContext)
     private val sessions = HttpSessions(TlsSessionConnector)
     private val tcp = TcpSockets(emit = this::emitEvent)
@@ -60,6 +61,7 @@ internal class LinkBridge(
     )
     private val clientSecrets = ClientSecrets(scope, fetchClientSecret)
     private val bluetoothAvailable: Boolean by lazy { Transports.bluetoothAvailable(host.hostContext) }
+    private val webSessionAvailable: Boolean by lazy { WebSignIn.isAvailable(host.hostContext) }
     private var disposed = false
 
     /** Bumped for each new document: answers to the previous document's requests are dropped. */
@@ -157,6 +159,7 @@ internal class LinkBridge(
             JSONObject()
         }
         "camera.scanCode" -> scanner.scan(params)
+        "auth.webSession" -> webSignIn.signIn(params)
         "lan.discover" -> discover(LanDiscovery.parseRequest(params))
         "lan.stopDiscovery" -> {
             discovery.stop()
@@ -280,7 +283,7 @@ internal class LinkBridge(
             .put("sdkVersion", Plugchoice.SDK_VERSION)
             .put("platform", "android")
             .put("osVersion", Build.VERSION.RELEASE)
-            .put("capabilities", JSONArray(capabilities(bluetoothAvailable)))
+            .put("capabilities", JSONArray(capabilities(bluetoothAvailable, webSessionAvailable)))
             .put("lanServiceTypes", JSONObject.NULL)
     }
 
@@ -374,11 +377,13 @@ internal class LinkBridge(
         /**
          * `hello`'s capabilities (§5). No `wifi.accessory` on Android (that's AccessorySetupKit on
          * iOS); `ble` when [bluetoothAvailable] (the device has Bluetooth LE and the host kept the
-         * library's Bluetooth permissions).
+         * library's Bluetooth permissions); `auth.webSession` when [webSessionAvailable] (the
+         * browser supports Auth Tab).
          */
-        fun capabilities(bluetoothAvailable: Boolean): List<String> = buildList {
+        fun capabilities(bluetoothAvailable: Boolean, webSessionAvailable: Boolean = false): List<String> = buildList {
             addAll(listOf("wifi.join", "http.request", "ws", "session.close", "camera.scanCode", "ui.closeRequest"))
             addAll(listOf("lan.address", "lan.discover", "http.session", "auth.clientSecret"))
+            if (webSessionAvailable) add("auth.webSession")
             if (bluetoothAvailable) add("ble")
             addAll(listOf("tcp", "udp", "trust.custom"))
         }

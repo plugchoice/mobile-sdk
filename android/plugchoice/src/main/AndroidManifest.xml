@@ -44,6 +44,13 @@
         android:name="android.hardware.bluetooth_le"
         android:required="false" />
 
+    <!-- auth.webSession: find a browser that supports Custom Tabs, to check for Auth Tab (API 30+). -->
+    <queries>
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+    </queries>
+
     <application>
         <!--
           configChanges: the Link UI must never reload mid-flow (it would lose its
