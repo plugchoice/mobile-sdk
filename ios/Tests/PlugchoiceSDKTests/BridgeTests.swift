@@ -29,7 +29,7 @@ final class BridgeTests: XCTestCase {
         let capabilities = try XCTUnwrap(result["capabilities"] as? [String])
         XCTAssertEqual(
             capabilities,
-            ["wifi.join", "http.request", "ws", "session.close", "ui.closeRequest", "lan.address", "http.session", "auth.clientSecret", "tcp", "udp", "trust.custom"],
+            ["wifi.join", "http.request", "ws", "session.close", "ui.closeRequest", "lan.address", "http.session", "auth.clientSecret", "auth.webSession", "tcp", "udp", "trust.custom"],
             "the test host has no NSCameraUsageDescription, NSBonjourServices, NSBluetoothAlwaysUsageDescription or NSAccessorySetupKitSupports"
         )
         XCTAssertEqual(result["lanServiceTypes"] as? [String], [], "the test host declares none")
@@ -127,6 +127,32 @@ final class BridgeTests: XCTestCase {
             ["status": "error", "error": "x"],
         ] {
             assertCode("invalidParams", "\(params)") { _ = try self.close(params) }
+        }
+    }
+
+    // MARK: - auth.webSession
+
+    func testWebSessionURL() throws {
+        XCTAssertEqual(
+            try Bridge.webSessionURL(Params(["url": "https://app.plugchoice.com/auth/google/link-run?ticket=t"])).absoluteString,
+            "https://app.plugchoice.com/auth/google/link-run?ticket=t"
+        )
+        XCTAssertThrowsError(try Bridge.webSessionURL(Params([:])))
+        XCTAssertThrowsError(try Bridge.webSessionURL(Params(["url": ""])))
+        XCTAssertThrowsError(try Bridge.webSessionURL(Params(["url": "http://app.plugchoice.com/auth"])))
+        XCTAssertThrowsError(try Bridge.webSessionURL(Params(["url": "plugchoice-link://auth"])))
+        XCTAssertThrowsError(try Bridge.webSessionURL(Params(["url": "https://"])))
+    }
+
+    func testWebSessionIsUnavailableWithoutAWindow() async {
+        // No presenter on screen: answer `unavailable`, never start a sheet.
+        do {
+            _ = try await WebSignIn().signIn(url: URL(string: "https://app.plugchoice.com/auth")!, from: nil)
+            XCTFail("expected unavailable")
+        } catch let error as BridgeError {
+            XCTAssertEqual(error.code, "unavailable")
+        } catch {
+            XCTFail("unexpected \(error)")
         }
     }
 

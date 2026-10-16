@@ -47,6 +47,8 @@ dependencies {
     api("androidx.activity:activity-ktx:1.12.4")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.webkit:webkit:1.15.0")
+    // auth.webSession: Google and Apple sign-in in Chrome's Auth Tab.
+    implementation("androidx.browser:browser:1.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     // camera.scanCode: the Google code scanner (Play services UI, no camera permission).

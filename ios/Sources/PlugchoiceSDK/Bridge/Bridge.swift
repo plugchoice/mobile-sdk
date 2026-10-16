@@ -23,7 +23,7 @@ final class Bridge {
     }
 
     weak var webView: WKWebView?
-    /// Presents the `camera.scanCode` scanner.
+    /// Presents the `camera.scanCode` scanner and the `auth.webSession` sheet.
     weak var presenter: UIViewController?
     /// `hello` was answered: the page draws its own close control and
     /// decides about native closes from now on.
@@ -38,6 +38,7 @@ final class Bridge {
     private let wifi = WifiService()
     private lazy var http = HTTPService()
     private lazy var scanner = CodeScanner()
+    private lazy var webSignIn = WebSignIn()
     private lazy var webSockets = WebSocketService { [weak self] event, params in
         self?.emit(event, params)
     }
@@ -193,6 +194,13 @@ final class Bridge {
                     ["clientSecret": try await secrets.clientSecret()]
                 }
 
+            case "auth.webSession":
+                let url = try Self.webSessionURL(params)
+                let presenter = presenter
+                run(reply) { [webSignIn, weak presenter] in
+                    try await webSignIn.signIn(url: url, from: presenter)
+                }
+
             case "camera.scanCode":
                 let request = try Self.scanRequest(params)
                 let presenter = presenter
@@ -316,7 +324,7 @@ final class Bridge {
         if LanDiscovery.isAvailable(declared: declaredServiceTypes) {
             capabilities.append("lan.discover")
         }
-        capabilities += ["http.session", "auth.clientSecret"]
+        capabilities += ["http.session", "auth.clientSecret", "auth.webSession"]
         if bluetoothAvailable {
             capabilities.append("ble")
         }
@@ -372,6 +380,15 @@ final class Bridge {
             devices: devices,
             error: error
         )
+    }
+
+    /// `auth.webSession`'s `url`: an `https` URL with a host (core's sign-in hop).
+    static func webSessionURL(_ params: Params) throws -> URL {
+        let string = try params.string("url")
+        guard let url = URL(string: string), url.scheme?.lowercased() == "https", url.host?.isEmpty == false else {
+            throw BridgeError.invalidParams("url must be an https URL")
+        }
+        return url
     }
 
     static func scanRequest(_ params: Params) throws -> CodeScanner.Request {
