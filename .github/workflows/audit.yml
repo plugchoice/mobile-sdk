@@ -29,7 +29,7 @@ jobs:
       # The React Native package has no dependencies of its own (expo is a peer dependency), so
       # --prod checks nothing today; it is there for the first one added. Everything else in the
       # lockfile is tooling for the package's own tests.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - run: npm install --global pnpm@11
