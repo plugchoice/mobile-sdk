@@ -4,6 +4,9 @@ version: 2
 # pull request and merge themselves once CI passes (the dependabot job in ci.yml); every major
 # update is a pull request of its own and waits for review.
 updates:
+  # The build toolchain (Gradle wrapper, Android Gradle Plugin, Kotlin) is a tested set
+  # (gradle/libs.versions.toml), and the Kotlin the library is built with decides which Kotlin an
+  # app needs, so their minor versions move by hand; patches still come here.
   - package-ecosystem: gradle
     directory: /android
     schedule:
@@ -11,6 +14,25 @@ updates:
     cooldown:
       default-days: 5
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: gradle-wrapper
+        update-types:
+          - version-update:semver-minor
+      - dependency-name: agp
+        update-types:
+          - version-update:semver-minor
+      - dependency-name: com.android.*
+        update-types:
+          - version-update:semver-minor
+      - dependency-name: kotlin
+        update-types:
+          - version-update:semver-minor
+      - dependency-name: org.jetbrains.kotlin.*
+        update-types:
+          - version-update:semver-minor
+      - dependency-name: org.jetbrains.kotlin:*
+        update-types:
+          - version-update:semver-minor
     groups:
       gradle:
         patterns:
