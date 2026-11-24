@@ -5,7 +5,7 @@
 # its dependencies are in plugchoice/build.gradle.kts.
 [versions]
 agp = "8.13.2"
-kotlin = "2.3.21"
+kotlin = "2.4.21"
 maven-publish = "0.37.0"
 activity = "1.12.4"
 core = "1.17.0"
