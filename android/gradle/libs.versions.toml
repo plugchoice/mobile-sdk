@@ -4,7 +4,7 @@
 # The :plugchoice library doesn't use this catalog (it is also built inside React Native host apps);
 # its dependencies are in plugchoice/build.gradle.kts.
 [versions]
-agp = "8.13.2"
+agp = "9.5.2"
 kotlin = "2.3.21"
 maven-publish = "0.37.0"
 activity = "1.12.4"
