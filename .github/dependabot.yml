@@ -1,0 +1,93 @@
+version: 2
+
+# Daily updates after a five-day cooldown. Minor and patch updates of an ecosystem come as one
+# pull request and merge themselves once CI passes (the dependabot job in ci.yml); every major
+# update is a pull request of its own and waits for review.
+updates:
+  - package-ecosystem: gradle
+    directory: /android
+    schedule:
+      interval: daily
+    cooldown:
+      default-days: 5
+    open-pull-requests-limit: 5
+    groups:
+      gradle:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "chore(deps)"
+
+  # Only devDependencies (expo is a peer dependency, left as it is). React Native and React move
+  # with the Expo SDK, whose releases pin their minor versions, so only their patches come here.
+  - package-ecosystem: npm
+    directory: /react-native
+    schedule:
+      interval: daily
+    cooldown:
+      default-days: 5
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: react-native
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
+      - dependency-name: react
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
+    groups:
+      npm:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "chore(deps)"
+
+  # Package.swift has no dependencies yet; this picks up the first one.
+  - package-ecosystem: swift
+    directory: /
+    schedule:
+      interval: daily
+    cooldown:
+      default-days: 5
+    open-pull-requests-limit: 5
+    groups:
+      swift:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "chore(deps)"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    cooldown:
+      default-days: 5
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "chore(deps)"

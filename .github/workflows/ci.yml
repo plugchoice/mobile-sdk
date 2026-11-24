@@ -73,3 +73,27 @@ jobs:
           xcodebuild -scheme PlugchoiceSDK -destination "id=$device" test
       - name: Build the example app
         run: xcodebuild -project ios/Example/Example.xcodeproj -scheme Example -destination 'generic/platform=iOS Simulator' build
+
+  audit:
+    uses: ./.github/workflows/audit.yml
+
+  # Dependabot's minor and patch updates merge themselves once every check above has passed;
+  # majors wait for a person. Only when Dependabot opened the pull request and made its last push.
+  dependabot:
+    name: Merge Dependabot update
+    needs: [commits, react-native, android, ios, audit]
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]' && github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+      - name: Squash-merge minor and patch updates
+        if: contains(fromJSON('["version-update:semver-minor", "version-update:semver-patch"]'), steps.metadata.outputs.update-type)
+        run: gh pr merge --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ github.token }}
