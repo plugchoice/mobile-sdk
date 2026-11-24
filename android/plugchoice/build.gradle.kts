@@ -48,15 +48,15 @@ dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.webkit:webkit:1.15.0")
     // auth.webSession: Google and Apple sign-in in Chrome's Auth Tab.
-    implementation("androidx.browser:browser:1.9.0")
+    implementation("androidx.browser:browser:1.10.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
     // camera.scanCode: the Google code scanner (Play services UI, no camera permission).
     implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
     testImplementation("junit:junit:4.13.2")
     // Virtual time for the client secret's 30 s timeout.
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
     // The real org.json: android.jar only has stubs on the JVM.
     testImplementation("org.json:json:20260814")
 }
