@@ -24,7 +24,7 @@ jobs:
     name: Dependency audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # The React Native package has no dependencies of its own (expo is a peer dependency), so
       # --prod checks nothing today; it is there for the first one added. Everything else in the
